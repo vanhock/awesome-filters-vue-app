@@ -8,6 +8,16 @@
   </div>
 </template>
 
+<script>
+import { getParameterByName } from "./helpers";
+
+export default {
+  created() {
+    this.$store.dispatch("getShopAccount", getParameterByName("shop"));
+  }
+};
+</script>
+
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
