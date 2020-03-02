@@ -1,19 +1,26 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-menu :menu="menu" />
     </div>
-    <router-view />
+    <div class="content">
+      <router-view />
+    </div>
   </div>
 </template>
 
 <script>
-import { getParameterByName } from "./helpers";
-
+import "./_mixins/FiltersMixin";
+import RouterMenu from "./molecules/RouterMenu";
 export default {
+  components: { RouterMenu },
   created() {
-    this.$store.dispatch("getShopAccount", getParameterByName("shop"));
+    this.$store.dispatch("setUser");
+  },
+  computed: {
+    menu() {
+      return this.$router && this.$router.options.routes;
+    }
   }
 };
 </script>
@@ -29,14 +36,19 @@ export default {
 
 #nav {
   padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+  display: flex;
+  justify-content: center;
+}
+.content {
+  max-width: 1400px;
+  min-height: 700px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 7px;
+  @include box-shadow(medium);
+  h1 {
+    padding: 30px 0;
+    margin: 0;
   }
 }
 </style>
