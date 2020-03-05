@@ -11,7 +11,23 @@ const api = axios.create({
 export default new Vuex.Store({
   state: {
     user: {},
-    themes: []
+    themes: [],
+    selectedThemeId: ""
+  },
+  getters: {
+    selectedTheme(state) {
+      if (!state.themes || !state.selectedThemeId) {
+        return;
+      }
+      let selectedTheme;
+      state.themes.some(t => {
+        if (t.id === state.selectedThemeId) {
+          selectedTheme = t;
+          return true;
+        }
+      });
+      return selectedTheme;
+    }
   },
   mutations: {
     setUser(state, payload) {
@@ -19,6 +35,9 @@ export default new Vuex.Store({
     },
     setThemes(state, payload) {
       state.themes = payload || [];
+    },
+    setSelectedTheme(state, payload) {
+      state.selectedThemeId = payload || "";
     }
   },
   actions: {
@@ -29,6 +48,11 @@ export default new Vuex.Store({
     async setThemes({ commit }) {
       const { data } = await api.get("/get-themes");
       commit("setThemes", data);
+    },
+    async setUp({ commit, state }) {
+      const { data } = await api.post(
+        `/install-to-theme?themeId=${state.selectedThemeId}`
+      );
     }
   },
   modules: {}

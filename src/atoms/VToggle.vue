@@ -2,8 +2,7 @@
   <div
     class="v-toggle"
     :class="[
-      { active: active, 'show-text': !hideText, background: background },
-      appTheme
+      { active: active, 'show-text': !hideText, background: background }
     ]"
     @click="$emit('click')"
     @mouseenter="hover = true"
@@ -30,7 +29,6 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
 import VIcon from "./VIcon/VIcon";
 export default {
   name: "VToggle",
@@ -39,7 +37,6 @@ export default {
     hover: false
   }),
   computed: {
-    ...mapState(["appTheme"]),
     currentIcon() {
       return (this.iconHover && this.hover && this.iconHover) || this.icon;
     }

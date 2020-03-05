@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import "bootstrap-4-grid/css/grid.min.css";
 import "./_mixins/FiltersMixin";
 import RouterMenu from "./molecules/RouterMenu";
 export default {
@@ -32,6 +33,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  padding: 0 30px;
 }
 
 #nav {

@@ -1,57 +1,87 @@
 <template>
   <div class="installation-view">
-    <content-with-sidebar sidebar-position="right">
+    <content-layout sidebar-position="right">
       <div class="view-content">
-        <h1>Установка</h1>
-        <h2 class="title">1. Выберите тему</h2>
-        <div class="desc">
-          <p>
-            В выбранную тему будут скопированы файлы, необходимые для работы приложения Awesome Filters.
-          </p>
-          <p>Рекомендуем устанавливать в <b>не опубликованную тему</b>, чтобы случайно не сломать страницы, видимые для клиента.</p>
-          <div>
-            Список файлов, которые будут скопированые при установке:
-            <!--<ul>
-              <li></li>
-            </ul>-->
+        <section v-show="selectedSection === 1">
+          <h2 class="title">1. Выберите тему</h2>
+          <div class="desc">
+            <p>
+              В выбранную тему будут скопированы файлы, необходимые для работы приложения Awesome Filters.
+            </p>
+            <p>Рекомендуем устанавливать в <b>не опубликованную тему</b>, чтобы случайно не сломать страницы, видимые для клиента.</p>
+            <p><b>Перед установкой AwesomeFilters сделайте бекап темы!</b></p>
           </div>
-        </div>
-        <themes-list />
-        <h2 class="title">2. Подключите сниппеты</h2>
-        <div class="desc">
-          <p>Подключить сниппеты на сайт в теме с помощью <code>{% include '[snippet]' %}</code>, где [snippet] - имя файла, без расширения .liquid.</p>
-          <p>Подключить сниппет перед закрывающим тегом <code>&lt;/head&gt;</code></p>
-          <p>Сниппет подключить перед закрывающим тегом <code>&lt;/body&gt;</code></p>
-          <v-button-primary>Перейти в редактирование кода темы</v-button-primary>
-        </div>
-        <h2 class="title">3. Настройте шаблон collection.liquid</h2>
-        <div class="desc">
-          <b>Внимание!</b> Для настройки данного шаблона необходимо знать синтаксис шаблонов Vue.js, <br />
-          если вы не обладаете данными навыками, то рекомендуем обратиться к нашим специалистам для дальнейшей установки приложения. <br />
-          <p><b>Это бесплатно!</b> Услуга по установке входит в стоимость приложения!</p>
-        </div>
+          <themes-list />
+          <div class="actions">
+            <v-button-primary :disabled="!selectedThemeId" @click="setUpTheme">Установить и настроить</v-button-primary>
+          </div>
+        </section>
+        <section v-show="selectedSection === 2">
+          <h2 class="title">2. Настройте шаблон collection.liquid</h2>
+          <div class="desc">
+            <b>Внимание!</b> Для настройки данного шаблона необходимо знать синтаксис шаблонов Vue.js, <br />
+            если вы не обладаете данными навыками, то рекомендуем обратиться к нашим специалистам для дальнейшей установки приложения. <br />
+            <p><b>Это бесплатно!</b> Услуга по установке входит в стоимость приложения!</p>
+          </div>
+        </section>
       </div>
-    </content-with-sidebar>
+    </content-layout>
   </div>
 </template>
 
 <script>
-import ContentWithSidebar from "../layouts/ContentWithSidebarLayout";
 import ThemesList from "../organisms/ThemesList";
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import VButtonPrimary from "../molecules/VButton/VButtonPrimary";
+import VButtonInline from "../molecules/VButton/VButtonInline";
+import VButtonOutline from "../molecules/VButton/VButtonOutline";
+import ContentLayout from "../layouts/ContentLayout";
 export default {
   name: "Home",
   components: {
+    ContentLayout,
+    VButtonOutline,
+    VButtonInline,
     VButtonPrimary,
-    ThemesList,
-    ContentWithSidebar
+    ThemesList
   },
   created() {
     this.$store.dispatch("setThemes");
   },
+  data: () => ({
+    selectedSection: 1
+  }),
   computed: {
-    ...mapState(["user"])
+    ...mapState(["user", "selectedThemeId"]),
+    ...mapGetters(["selectedTheme"]),
+    editSourceCodeUrl() {
+      if (!this.user) {
+        return;
+      }
+      return `https://${this.user.shop}/admin2/themes/${this.selectedThemeId}`;
+    }
+  },
+  methods: {
+    setUpTheme() {
+      this.$store.dispatch("setUp")
+    },
+    setSelected(section) {
+      this.selectedSection = section;
+    },
+    selectAndCopy(el) {
+      const copied = document.createElement("div");
+      copied.className = "copied";
+      copied.innerHTML = "Скопировано";
+      if (!el) {
+        return;
+      }
+      el.select();
+      document.execCommand("copy");
+      el.parentNode.insertBefore(copied, el.nextSibling);
+      setTimeout(() => {
+        copied.remove();
+      }, 2000);
+    }
   }
 };
 </script>
@@ -71,5 +101,50 @@ h2 {
   margin-bottom: 15px;
   font-size: 14px;
   color: $color-b2;
+}
+.code {
+  background-color: $color-highlight;
+  padding: 7px 15px;
+  margin: 5px 0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  border: 0;
+  height: 22px;
+  width: 372px;
+  font-size: 16px;
+}
+</style>
+<style lang="scss">
+.installation-view {
+  section {
+    a {
+      display: block;
+      max-width: fit-content;
+      width: auto;
+      text-decoration: none;
+      color: #fff;
+    }
+    .v-button {
+      margin-top: 15px;
+      margin-right: 10px;
+    }
+    .actions {
+      display: flex;
+      .v-button {
+        margin-top: 25px;
+        font-size: 16px;
+      }
+    }
+    img {
+      display: block;
+      margin: 20px 0;
+    }
+  }
+  .copied {
+    position: absolute;
+    margin-left: 440px;
+    margin-top: -34px;
+    color: $color-w1;
+  }
 }
 </style>
