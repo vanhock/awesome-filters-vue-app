@@ -39,7 +39,7 @@ export default {
   .i-#{$key}-icon {
     mask: url($value) center no-repeat;
     $size: map-get($sizes, $key);
-    mask-size: map-get($sizes, width) map-get($size, height);
+    //mask-size: map-get($sizes, width) map-get($size, height);
     background-color: #000;
   }
   .i-#{$key}-image {

@@ -16,7 +16,12 @@
             <span class="true" v-if="theme.installed">{{theme.installed}}</span>
             <span v-if="!theme.installed">Нет</span>
           </div>
-          <div class="uninstall"></div>
+          <div class="uninstall">
+            <v-icon v-if="theme.installed"
+                    icon="x"
+                    :params="{iconSize: '16px'}"
+                    @click="uninstallFromTheme(theme.id)" />
+          </div>
           <div class="update"></div>
         </div>
       </div>
@@ -28,15 +33,19 @@ import VCardTable from "../molecules/VCard/VCardTable";
 import { mapState } from "vuex";
 import VButtonOutline from "../molecules/VButton/VButtonOutline";
 import VRadioCheckbox from "../atoms/VRadioCheckbox";
+import VIcon from "../atoms/VIcon/VIcon";
 export default {
   name: "ThemesList",
-  components: { VRadioCheckbox, VButtonOutline, VCardTable },
+  components: { VIcon, VRadioCheckbox, VButtonOutline, VCardTable },
   computed: {
     ...mapState(["themes", "selectedThemeId"])
   },
   methods: {
     setSelectedTheme(id) {
       this.$store.commit("setSelectedTheme", id);
+    },
+    uninstallFromTheme(id) {
+      this.$store.dispatch("uninstallFromTheme", id);
     }
   }
 };
@@ -106,10 +115,23 @@ export default {
     }
     .installed {
       font-size: 12px;
-      width: 170px;
+      width: 140px;
       .true {
         color: $color-green;
         font-weight: bold;
+      }
+    }
+    .uninstall {
+      width: 50px;
+      visibility: hidden;
+      opacity: 0.4;
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+    &:hover {
+      .uninstall {
+        visibility: visible;
       }
     }
   }

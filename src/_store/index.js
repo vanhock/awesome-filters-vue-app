@@ -12,7 +12,8 @@ export default new Vuex.Store({
   state: {
     user: {},
     themes: [],
-    selectedThemeId: ""
+    selectedThemeId: "",
+    selectedTemplate: ""
   },
   getters: {
     selectedTheme(state) {
@@ -38,6 +39,9 @@ export default new Vuex.Store({
     },
     setSelectedTheme(state, payload) {
       state.selectedThemeId = payload || "";
+    },
+    setSelectedTemplate(state, payload) {
+      state.selectedTemplate = payload || "";
     }
   },
   actions: {
@@ -53,6 +57,11 @@ export default new Vuex.Store({
       const { data } = await api.post(
         `/install-to-theme?themeId=${state.selectedThemeId}`
       );
+    },
+    uninstallFromTheme({ commit, dispatch }, payload) {
+      api.post(`/uninstall-from-theme?themeId=${payload}`).then(() => {
+        dispatch("setThemes");
+      });
     }
   },
   modules: {}

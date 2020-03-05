@@ -80,7 +80,10 @@ export default {
       this.$el.style.height = `${this.$el.clientHeight}px`;
     },
     resetSliderHeight() {
-      this.$el.style.height = "auto"
+      this.$el.style.height = "auto";
+    },
+    goTo(index) {
+      this.$refs.slider.goTo(index);
     }
   }
 };

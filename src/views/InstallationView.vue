@@ -8,20 +8,24 @@
             <p>
               В выбранную тему будут скопированы файлы, необходимые для работы приложения Awesome Filters.
             </p>
+            <p>Приложение автоматически создаст <b>бекап</b> - архив с копией вашей темы.</p>
             <p>Рекомендуем устанавливать в <b>не опубликованную тему</b>, чтобы случайно не сломать страницы, видимые для клиента.</p>
-            <p><b>Перед установкой AwesomeFilters сделайте бекап темы!</b></p>
           </div>
           <themes-list />
           <div class="actions">
-            <v-button-primary :disabled="!selectedThemeId" @click="setUpTheme">Установить и настроить</v-button-primary>
+            <v-button-primary :disabled="!selectedThemeId" @click="setSelected(2)">Продолжить</v-button-primary>
           </div>
         </section>
         <section v-show="selectedSection === 2">
-          <h2 class="title">2. Настройте шаблон collection.liquid</h2>
+          <h2 class="title">2. Выберите шаблон страницы</h2>
           <div class="desc">
-            <b>Внимание!</b> Для настройки данного шаблона необходимо знать синтаксис шаблонов Vue.js, <br />
-            если вы не обладаете данными навыками, то рекомендуем обратиться к нашим специалистам для дальнейшей установки приложения. <br />
-            <p><b>Это бесплатно!</b> Услуга по установке входит в стоимость приложения!</p>
+            <p>Выберите дизайн страницы, соответствующий вашей теме дизайна или Стандартный.</p>
+            <p>Если не нашли вашу тему в списке, <a href="#">закажите</a> индивидуальную разработку страницы с фильтрами у нас.</p>
+          </div>
+          <templates-list />
+          <div class="actions">
+            <v-button-primary :disabled="!selectedThemeId || !selectedTemplate" @click="setUpTheme">Установить</v-button-primary>
+            <v-button-inline @click="setSelected(1)">Назад</v-button-inline>
           </div>
         </section>
       </div>
@@ -36,9 +40,11 @@ import VButtonPrimary from "../molecules/VButton/VButtonPrimary";
 import VButtonInline from "../molecules/VButton/VButtonInline";
 import VButtonOutline from "../molecules/VButton/VButtonOutline";
 import ContentLayout from "../layouts/ContentLayout";
+import TemplatesList from "../organisms/TemplatesList";
 export default {
   name: "Home",
   components: {
+    TemplatesList,
     ContentLayout,
     VButtonOutline,
     VButtonInline,
@@ -52,7 +58,7 @@ export default {
     selectedSection: 1
   }),
   computed: {
-    ...mapState(["user", "selectedThemeId"]),
+    ...mapState(["user", "selectedThemeId", "selectedTemplate"]),
     ...mapGetters(["selectedTheme"]),
     editSourceCodeUrl() {
       if (!this.user) {
@@ -63,7 +69,7 @@ export default {
   },
   methods: {
     setUpTheme() {
-      this.$store.dispatch("setUp")
+      this.$store.dispatch("setUp");
     },
     setSelected(section) {
       this.selectedSection = section;
@@ -117,13 +123,6 @@ h2 {
 <style lang="scss">
 .installation-view {
   section {
-    a {
-      display: block;
-      max-width: fit-content;
-      width: auto;
-      text-decoration: none;
-      color: #fff;
-    }
     .v-button {
       margin-top: 15px;
       margin-right: 10px;
@@ -145,6 +144,9 @@ h2 {
     margin-left: 440px;
     margin-top: -34px;
     color: $color-w1;
+  }
+  .v-button-inline {
+    color: $color-b3;
   }
 }
 </style>
