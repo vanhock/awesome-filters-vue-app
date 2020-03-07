@@ -13,7 +13,9 @@
           </div>
           <themes-list />
           <div class="actions">
-            <v-button-primary :disabled="!selectedThemeId" @click="setSelected(2)">Продолжить</v-button-primary>
+            <v-button-primary :disabled="!selectedThemeId" @click="setSelected(2)">Продолжить установку</v-button-primary>
+            <v-button-outline v-show="selectedTheme && selectedTheme.installed" @click="setUpTheme">Обновить</v-button-outline>
+            <v-button-outline v-show="selectedTheme" @click="backupTheme">Бекап</v-button-outline>
           </div>
         </section>
         <section v-show="selectedSection === 2">
@@ -87,6 +89,9 @@ export default {
       setTimeout(() => {
         copied.remove();
       }, 2000);
+    },
+    backupTheme() {
+      this.$store.dispatch("backupTheme");
     }
   }
 };

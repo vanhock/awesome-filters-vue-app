@@ -58,6 +58,21 @@ export default new Vuex.Store({
         `/install-to-theme?themeId=${state.selectedThemeId}`
       );
     },
+    async backupTheme({ commit, state }) {
+      axios({
+        url: `/backup-theme?themeId=${state.selectedThemeId}`,
+        method: 'GET',
+        responseType: 'blob', // important
+      }).then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'file.zip');
+        document.body.appendChild(link);
+        link.click();
+      });
+      console.log(data);
+    },
     uninstallFromTheme({ commit, dispatch }, payload) {
       api.post(`/uninstall-from-theme?themeId=${payload}`).then(() => {
         dispatch("setThemes");
