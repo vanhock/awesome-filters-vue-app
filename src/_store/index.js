@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
+import moment from "moment";
 Vue.use(Vuex);
 
 const api = axios.create({
@@ -58,20 +59,20 @@ export default new Vuex.Store({
         `/install-to-theme?themeId=${state.selectedThemeId}`
       );
     },
-    async backupTheme({ commit, state }) {
+    async backupTheme({ commit, state, getters }) {
       axios({
         url: `/backup-theme?themeId=${state.selectedThemeId}`,
         method: 'GET',
         responseType: 'blob', // important
       }).then((response) => {
+        const fileName = `${getters.selectedTheme.title}-${moment().format('YYYY-MM-D-HH-mm')}.zip`;
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', 'file.zip');
+        link.setAttribute('download', fileName);
         document.body.appendChild(link);
         link.click();
       });
-      console.log(data);
     },
     uninstallFromTheme({ commit, dispatch }, payload) {
       api.post(`/uninstall-from-theme?themeId=${payload}`).then(() => {
