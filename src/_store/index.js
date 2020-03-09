@@ -54,10 +54,14 @@ export default new Vuex.Store({
       const { data } = await api.get("/get-themes");
       commit("setThemes", data);
     },
-    async setUp({ commit, state }) {
+    async installToTheme({ dispatch, state }) {
+      const template = state.selectedTemplate ? `&template=${state.selectedTemplate}` : "";
       const { data } = await api.post(
-        `/install-to-theme?themeId=${state.selectedThemeId}`
+        `/install-to-theme?themeId=${state.selectedThemeId}${template}`
       );
+      if(data) {
+        dispatch("setThemes");
+      }
     },
     async backupTheme({ commit, state, getters }) {
       axios({
@@ -74,7 +78,7 @@ export default new Vuex.Store({
         link.click();
       });
     },
-    uninstallFromTheme({ commit, dispatch }, payload) {
+    uninstallFromTheme({ dispatch }, payload) {
       api.post(`/uninstall-from-theme?themeId=${payload}`).then(() => {
         dispatch("setThemes");
       });

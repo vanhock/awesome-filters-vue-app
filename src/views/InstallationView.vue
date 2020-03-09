@@ -9,13 +9,11 @@
               В выбранную тему будут скопированы файлы, необходимые для работы приложения Awesome Filters.
             </p>
             <p>Приложение автоматически создаст <b>бекап</b> - архив с копией вашей темы.</p>
-            <p>Рекомендуем устанавливать в <b>не опубликованную тему</b>, чтобы случайно не сломать страницы, видимые для клиента.</p>
           </div>
           <themes-list />
           <div class="actions">
             <v-button-primary :disabled="!selectedThemeId" @click="setSelected(2)">Продолжить установку</v-button-primary>
-            <v-button-outline v-show="selectedTheme && selectedTheme.installed" @click="setUpTheme">Обновить</v-button-outline>
-            <v-button-outline v-show="selectedTheme" @click="backupTheme">Бекап</v-button-outline>
+            <v-button-outline v-show="selectedTheme && selectedTheme.installed" @click="installToTheme">Обновить</v-button-outline>
           </div>
         </section>
         <section v-show="selectedSection === 2">
@@ -26,7 +24,7 @@
           </div>
           <templates-list />
           <div class="actions">
-            <v-button-primary :disabled="!selectedThemeId || !selectedTemplate" @click="setUpTheme">Установить</v-button-primary>
+            <v-button-primary :disabled="!selectedThemeId || !selectedTemplate" @click="installToTheme">Установить</v-button-primary>
             <v-button-inline @click="setSelected(1)">Назад</v-button-inline>
           </div>
         </section>
@@ -70,8 +68,8 @@ export default {
     }
   },
   methods: {
-    setUpTheme() {
-      this.$store.dispatch("setUp");
+    installToTheme() {
+      this.$store.dispatch("installToTheme");
     },
     setSelected(section) {
       this.selectedSection = section;
