@@ -71,14 +71,17 @@ export default new Vuex.Store({
           dispatch("setThemes");
           commit("setLoading", false);
         }
+        console.log(data);
+        return Promise.resolve("Приложение установлено успешно");
       } catch(e) {
         console.log(e);
+        Promise.reject(e);
         commit("setLoading", false);
       }
     },
-    backupTheme({ commit, state, getters }) {
+    async backupTheme({ commit, state, getters }) {
       commit("setLoading", "Бекап темы...")
-      axios({
+      await axios({
         url: `/backup-theme?themeId=${state.selectedThemeId}`,
         method: 'GET',
         responseType: 'blob', // important
@@ -90,6 +93,7 @@ export default new Vuex.Store({
         link.setAttribute('download', fileName);
         document.body.appendChild(link);
         link.click();
+        return true;
       }).catch(error => {
         console.log(error);
         commit("setLoading", false);
@@ -98,8 +102,8 @@ export default new Vuex.Store({
     uninstallFromTheme({ commit, dispatch }, payload) {
       commit("setLoading", "Удаление темы...")
       api.post(`/uninstall-from-theme?themeId=${payload}`).then(() => {
-        dispatch("setThemes");
         commit("setLoading", false);
+        dispatch("setThemes");
       });
     }
   },

@@ -29,8 +29,9 @@
           <div class="uninstall">
             <v-icon
               v-if="theme.installed"
-              icon="x"
-              :params="{ iconSize: '16px' }"
+              mode="feather"
+              icon="trash-2"
+              :params="{ iconSize: '18px' }"
               @click="openDeleteModal(theme.id)"
             />
           </div>
@@ -85,8 +86,10 @@ export default {
     },
     uninstallFromTheme(id) {
       if (this.themeToDelete) {
-        this.$store.dispatch("uninstallFromTheme", this.themeToDelete);
-        this.$refs.modal.showModal = false
+        this.$store.dispatch("uninstallFromTheme", this.themeToDelete).then(() => {
+           this.$noty.success("Приложение удалено из темы");
+        })
+        this.$refs.modal.showModal = false;
       }
     },
     openDeleteModal(id) {

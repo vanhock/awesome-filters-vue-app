@@ -3,6 +3,7 @@ const SVGSpritemapPlugin = require("svg-spritemap-webpack-plugin");
 module.exports = {
   lintOnSave: false,
   configureWebpack: () => ({
+    devtool: "source-map",
     plugins: [
       new SVGSpritemapPlugin("src/_assets/img/icons/*.svg", {
         styles: path.join(__dirname, "src/_assets/styles/_sprites.scss")

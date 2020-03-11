@@ -112,7 +112,14 @@ export default {
   },
   methods: {
     installToTheme() {
-      this.$store.dispatch("backupTheme");
+      this.$store.dispatch("backupTheme").then(() => {
+        this.$store.dispatch("installToTheme").then(success => {
+          this.$noty.success(success);
+        }).catch(e => {
+          console.log(e);
+          this.$noty.error(e);
+        });
+      });
     },
     setSelected(section) {
       this.selectedSection = section;

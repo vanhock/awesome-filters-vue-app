@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div id="nav">
-      <v-icon icon="awesomefilters" :params="{width: '258px', height: '85px' }" />
+      <v-icon icon="awesomefilters" :params="{width: '258px', height: '110px' }" />
       <!-- <router-menu :menu="menu" /> -->
     </div>
     <div class="content">
@@ -15,6 +15,22 @@ import "bootstrap-4-grid/css/grid.min.css";
 import "./_mixins/FiltersMixin";
 import RouterMenu from "./molecules/RouterMenu";
 import VIcon from "./atoms/VIcon/VIcon"
+
+import Vue from "vue";
+import VueNoty from "vuejs-noty";
+Vue.use(VueNoty, {
+  timeout: 1500,
+  dismissQueue: true,
+  killer: true,
+  progressBar: false,
+  layout: "topCenter",
+  theme: "mint",
+  animation: {
+    open: "scale-in-bottom",
+    close: "scale-out-top"
+  }
+});
+
 export default {
   components: { RouterMenu, VIcon },
   created() {
@@ -29,6 +45,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import "./_assets/styles/notification";
 body {
   margin: 0;
   padding: 0;
