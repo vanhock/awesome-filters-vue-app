@@ -1,19 +1,42 @@
 <template>
-  <div class="v-icon" @click="$emit('click')">
+  <div @click="$emit('click')" class="v-icon">
     <div
-      class="v-icon-image"
-      :class="`i-${icon}-${mode}`"
+      v-if="mode === 'image'"
+      :class="`icon-${icon}`"
       :style="{
-        width: params && params.iconSize,
-        height: params && params.iconSize
+        width: params && params.width || params && params.iconSize,
+        height: params && params.height || params && params.iconSize
       }"
+      class="v-icon-image"
     ></div>
+      <Zodicon
+        v-if="mode === 'zondicon'"
+        :icon="icon"
+        :style="{
+        width: params && params.iconSize,
+        height: params && params.iconSize,
+        fontSize: params && params.textSize
+      }"
+        class="icon"
+      />
+      <feather-icon
+        v-if="mode === 'feather'"
+        :type="icon"
+        :fill="params && params.fill"
+        :stroke="params && params.stroke"
+        :strokeWidth="params && params.strokeWidth"
+        :size="(params && params.iconSize) || '24px'"
+        class="icon"
+      />
   </div>
 </template>
 
 <script>
+import Zodicon from "vue-zondicons";
+import FeatherIcon from "vue-feather";
 export default {
   name: "VIcon",
+  components: {Zodicon, FeatherIcon},
   props: {
     icon: {
       type: String,
@@ -21,13 +44,11 @@ export default {
     },
     mode: {
       type: String,
-      default: "icon"
+      default: "image"
     },
     params: {
       type: Object,
-      default: () => ({
-        iconSize: "24px"
-      })
+      default: () => {}
     }
   }
 };
@@ -36,16 +57,8 @@ export default {
 <style lang="scss" scoped>
 @import "../../_assets/styles/sprites";
 @each $key, $value in $sprites {
-  .i-#{$key}-icon {
-    mask: url($value) center no-repeat;
-    $size: map-get($sizes, $key);
-    //mask-size: map-get($sizes, width) map-get($size, height);
-    background-color: #000;
-  }
-  .i-#{$key}-image {
-    background: url($value) center no-repeat;
-    $size: map-get($sizes, $key);
-    background-size: map-get($sizes, width) map-get($size, height);
+  .icon-#{$key} {
+    @include sprite($key);
   }
 }
 .v-icon {

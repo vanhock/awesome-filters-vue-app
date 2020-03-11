@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-menu :menu="menu" />
+      <v-icon icon="awesomefilters" :params="{width: '258px', height: '85px' }" />
+      <!-- <router-menu :menu="menu" /> -->
     </div>
     <div class="content">
       <router-view />
@@ -13,8 +14,9 @@
 import "bootstrap-4-grid/css/grid.min.css";
 import "./_mixins/FiltersMixin";
 import RouterMenu from "./molecules/RouterMenu";
+import VIcon from "./atoms/VIcon/VIcon"
 export default {
-  components: { RouterMenu },
+  components: { RouterMenu, VIcon },
   created() {
     this.$store.dispatch("setUser");
   },
@@ -27,6 +29,10 @@ export default {
 </script>
 
 <style lang="scss">
+body {
+  margin: 0;
+  padding: 0;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -37,7 +43,6 @@ export default {
 }
 
 #nav {
-  padding: 30px;
   display: flex;
   justify-content: center;
 }

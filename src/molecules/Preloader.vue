@@ -10,6 +10,9 @@
           :key="i"
         ></div>
       </div>
+      <div class="preloader__text" v-if="text">
+        {{ text }}
+      </div>
     </div>
   </div>
 </template>
@@ -24,6 +27,9 @@ export default {
     show: {
       type: Boolean,
       default: false
+    },
+    text: {
+      type: [String, Boolean]
     },
     dark: {
       type: Boolean,
@@ -51,6 +57,10 @@ export default {
 
 .preloader {
   position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   left: 0;
   top: 0;
   width: 100%;
@@ -75,11 +85,13 @@ export default {
       }
     }
   }
+  &__text {
+    margin-top: 100px;
+  }
 }
 
 .pp-fading-spinner {
   position: absolute;
-  @include align();
   width: 40px;
   height: 40px;
 

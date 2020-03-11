@@ -14,7 +14,8 @@ export default new Vuex.Store({
     user: {},
     themes: [],
     selectedThemeId: "",
-    selectedTemplate: ""
+    selectedTemplate: "",
+    loading: false
   },
   getters: {
     selectedTheme(state) {
@@ -29,7 +30,9 @@ export default new Vuex.Store({
         }
       });
       return selectedTheme;
-    }
+    },
+    loading: state => !!state.loading,
+    loadingText: state => state.loading
   },
   mutations: {
     setUser(state, payload) {
@@ -43,6 +46,9 @@ export default new Vuex.Store({
     },
     setSelectedTemplate(state, payload) {
       state.selectedTemplate = payload || "";
+    },
+    setLoading(state, payload) {
+      state.loading = payload || false
     }
   },
   actions: {
@@ -54,16 +60,24 @@ export default new Vuex.Store({
       const { data } = await api.get("/get-themes");
       commit("setThemes", data);
     },
-    async installToTheme({ dispatch, state }) {
+    async installToTheme({ commit, dispatch, state }) {
+      commit("setLoading", "Установка темы...")
       const template = state.selectedTemplate ? `&template=${state.selectedTemplate}` : "";
-      const { data } = await api.post(
-        `/install-to-theme?themeId=${state.selectedThemeId}${template}`
-      );
-      if(data) {
-        dispatch("setThemes");
+      try {
+        const { data } = await api.post(
+          `/install-to-theme?themeId=${state.selectedThemeId}${template}`
+        );
+        if(data) {
+          dispatch("setThemes");
+          commit("setLoading", false);
+        }
+      } catch(e) {
+        console.log(e);
+        commit("setLoading", false);
       }
     },
-    async backupTheme({ commit, state, getters }) {
+    backupTheme({ commit, state, getters }) {
+      commit("setLoading", "Бекап темы...")
       axios({
         url: `/backup-theme?themeId=${state.selectedThemeId}`,
         method: 'GET',
@@ -76,11 +90,16 @@ export default new Vuex.Store({
         link.setAttribute('download', fileName);
         document.body.appendChild(link);
         link.click();
-      });
+      }).catch(error => {
+        console.log(error);
+        commit("setLoading", false);
+      })
     },
-    uninstallFromTheme({ dispatch }, payload) {
+    uninstallFromTheme({ commit, dispatch }, payload) {
+      commit("setLoading", "Удаление темы...")
       api.post(`/uninstall-from-theme?themeId=${payload}`).then(() => {
         dispatch("setThemes");
+        commit("setLoading", false);
       });
     }
   },

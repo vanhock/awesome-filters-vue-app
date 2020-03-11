@@ -1,35 +1,74 @@
 <template>
   <div class="installation-view">
-    <content-layout sidebar-position="right">
-      <div class="view-content">
-        <section v-show="selectedSection === 1">
-          <h2 class="title">1. Выберите тему</h2>
-          <div class="desc">
-            <p>
-              В выбранную тему будут скопированы файлы, необходимые для работы приложения Awesome Filters.
-            </p>
-            <p>Приложение автоматически создаст <b>бекап</b> - архив с копией вашей темы.</p>
+    <preloader :show="loading" :text="loadingText">
+      <content-layout sidebar-position="right">
+        <div class="view-content">
+          <div class="installation-menu">
+            <div class="item" :class="{ selected: selectedSection === 1 }">
+              <v-icon mode="feather" icon="check-square" />
+              <div>1. Выберите тему</div>
+            </div>
+            <div class="item" :class="{ selected: selectedSection === 2 }">
+              <v-icon mode="feather" icon="grid" />
+              <div>2. Выберите шаблон страницы</div>
+            </div>
+            <div class="item" :class="{ selected: selectedSection === 3 }">
+              <v-icon mode="feather" icon="eye" />
+              <div>3. Просмотр темы</div>
+            </div>
           </div>
-          <themes-list />
-          <div class="actions">
-            <v-button-primary :disabled="!selectedThemeId" @click="setSelected(2)">Продолжить установку</v-button-primary>
-            <v-button-outline v-show="selectedTheme && selectedTheme.installed" @click="installToTheme">Обновить</v-button-outline>
-          </div>
-        </section>
-        <section v-show="selectedSection === 2">
-          <h2 class="title">2. Выберите шаблон страницы</h2>
-          <div class="desc">
-            <p>Выберите дизайн страницы, соответствующий вашей теме дизайна или Стандартный.</p>
-            <p>Если не нашли вашу тему в списке, <a href="#">закажите</a> индивидуальную разработку страницы с фильтрами у нас.</p>
-          </div>
-          <templates-list />
-          <div class="actions">
-            <v-button-primary :disabled="!selectedThemeId || !selectedTemplate" @click="installToTheme">Установить</v-button-primary>
-            <v-button-inline @click="setSelected(1)">Назад</v-button-inline>
-          </div>
-        </section>
-      </div>
-    </content-layout>
+          <section v-show="selectedSection === 1">
+            <h2 class="title">1. Выберите тему</h2>
+            <div class="desc">
+              <p>
+                В выбранную тему будут скопированы файлы, необходимые для работы
+                приложения Awesome Filters.
+              </p>
+              <p>
+                Приложение автоматически создаст <b>бекап</b> - архив с копией
+                вашей темы.
+              </p>
+            </div>
+            <themes-list />
+            <div class="actions">
+              <v-button-primary
+                :disabled="!selectedThemeId"
+                @click="setSelected(2)"
+                >Продолжить установку</v-button-primary
+              >
+              <v-button-outline
+                v-show="selectedTheme && selectedTheme.installed"
+                @click="installToTheme"
+                >Обновить</v-button-outline
+              >
+            </div>
+          </section>
+          <section v-show="selectedSection === 2">
+            <h2 class="title">2. Выберите шаблон страницы</h2>
+            <div class="desc">
+              <p>
+                Выберите дизайн страницы, соответствующий вашей теме дизайна или
+                Стандартный.
+              </p>
+              <p>
+                Если не нашли вашу тему в списке,
+                <a href="#">закажите</a> индивидуальную разработку страницы с
+                фильтрами у нас.
+              </p>
+            </div>
+            <templates-list />
+            <div class="actions">
+              <v-button-primary
+                :disabled="!selectedThemeId || !selectedTemplate"
+                @click="installToTheme"
+                >Установить</v-button-primary
+              >
+              <v-button-inline @click="setSelected(1)">Назад</v-button-inline>
+            </div>
+          </section>
+        </div>
+      </content-layout>
+    </preloader>
   </div>
 </template>
 
@@ -39,8 +78,10 @@ import { mapState, mapGetters } from "vuex";
 import VButtonPrimary from "../molecules/VButton/VButtonPrimary";
 import VButtonInline from "../molecules/VButton/VButtonInline";
 import VButtonOutline from "../molecules/VButton/VButtonOutline";
+import Preloader from "../molecules/Preloader";
 import ContentLayout from "../layouts/ContentLayout";
 import TemplatesList from "../organisms/TemplatesList";
+import VIcon from "../atoms/VIcon/VIcon";
 export default {
   name: "Home",
   components: {
@@ -49,7 +90,9 @@ export default {
     VButtonOutline,
     VButtonInline,
     VButtonPrimary,
-    ThemesList
+    ThemesList,
+    Preloader,
+    VIcon
   },
   created() {
     this.$store.dispatch("setThemes");
@@ -59,7 +102,7 @@ export default {
   }),
   computed: {
     ...mapState(["user", "selectedThemeId", "selectedTemplate"]),
-    ...mapGetters(["selectedTheme"]),
+    ...mapGetters(["selectedTheme", "loading", "loadingText"]),
     editSourceCodeUrl() {
       if (!this.user) {
         return;
@@ -69,7 +112,7 @@ export default {
   },
   methods: {
     installToTheme() {
-      this.$store.dispatch("installToTheme");
+      this.$store.dispatch("backupTheme");
     },
     setSelected(section) {
       this.selectedSection = section;
@@ -87,9 +130,6 @@ export default {
       setTimeout(() => {
         copied.remove();
       }, 2000);
-    },
-    backupTheme() {
-      this.$store.dispatch("backupTheme");
     }
   }
 };
@@ -150,6 +190,26 @@ h2 {
   }
   .v-button-inline {
     color: $color-b3;
+  }
+  .installation-menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin: 40px 28px;
+      font-weight: bold;
+      font-size: 14px;
+      &:not(.selected) {
+        opacity: 0.5;
+      }
+      .v-icon {
+        margin-bottom: 10px;
+      }
+    }
   }
 }
 </style>

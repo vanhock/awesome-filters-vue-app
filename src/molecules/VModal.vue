@@ -13,7 +13,6 @@
 </template>
 
 <script>
-import { addClass, removeClass } from "../_helpers/utils";
 
 export default {
   name: "VModal",
@@ -26,9 +25,10 @@ export default {
   watch: {
     showModal(value) {
       if (value) {
-        addClass(document.body, "popup-open");
+        document.body.classList.add("popup-open");
       } else {
-        removeClass(document.body, "popup-open");
+        document.body.classList.remove("popup-open");
+        this.$emit("close")
       }
     }
   }

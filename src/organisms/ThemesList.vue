@@ -1,30 +1,63 @@
 <template>
-  <div class="themes ">
-
-    <div
+  <div>
+    <div class="themes">
+      <div
         class="themes__item"
         v-for="theme in themes"
         :key="theme.id"
-        :class="{selected: selectedThemeId === theme.id}"
-        @click="setSelectedTheme(theme.id)">
+        :class="{ selected: selectedThemeId === theme.id }"
+        @click="setSelectedTheme(theme.id)"
+      >
         <div class="wrapper">
-          <v-radio-checkbox name="selected-theme" :checked="selectedThemeId === theme.id" />
-          <div class="title">{{theme.title}}</div>
-          <div><div class="badge" v-if="theme.is_published">{{theme.is_published ? 'опубликованная' : ''}}</div></div>
+          <v-radio-checkbox
+            name="selected-theme"
+            :checked="selectedThemeId === theme.id"
+          />
+          <div class="title">{{ theme.title }}</div>
+          <div>
+            <div class="badge" v-if="theme.is_published">
+              {{ theme.is_published ? "опубликованная" : "" }}
+            </div>
+          </div>
           <div class="installed">
             Установлено:
-            <span class="true" v-if="theme.installed">{{theme.installed}}</span>
+            <span class="true" v-if="theme.installed">{{
+              theme.installed
+            }}</span>
             <span v-if="!theme.installed">Нет</span>
           </div>
           <div class="uninstall">
-            <v-icon v-if="theme.installed"
-                    icon="x"
-                    :params="{iconSize: '16px'}"
-                    @click="uninstallFromTheme(theme.id)" />
+            <v-icon
+              v-if="theme.installed"
+              icon="x"
+              :params="{ iconSize: '16px' }"
+              @click="openDeleteModal(theme.id)"
+            />
           </div>
           <div class="update"></div>
         </div>
       </div>
+    </div>
+    <v-modal
+      ref="modal"
+      title="Удаление AwesomeFilters из темы"
+      @close="themeToDelete = ''"
+    >
+      <p>
+        Приложение удалит все установленные приложением ресурсы из темы, кроме шаблона <b>collection.liquid</b>
+      </p>
+      <p>
+        Внимание! Шаблон collection.liquid не вернется в состояние до установки.
+        Вам необходимо обновить его вручную, используя backup-[date]-collection.liquid в
+        теме или бекап темы, скаченный при установке.
+      </p>
+      <div class="actions">
+        <v-button-primary @click="uninstallFromTheme">Удалить</v-button-primary>
+        <v-button-inline @click="$refs.modal.showModal = false"
+          >Отмена</v-button-inline
+        >
+      </div>
+    </v-modal>
   </div>
 </template>
 
@@ -33,10 +66,16 @@ import VCardTable from "../molecules/VCard/VCardTable";
 import { mapState } from "vuex";
 import VButtonOutline from "../molecules/VButton/VButtonOutline";
 import VRadioCheckbox from "../atoms/VRadioCheckbox";
+import VButtonPrimary from "../molecules/VButton/VButtonPrimary";
+import VButtonInline from "../molecules/VButton/VButtonInline";
 import VIcon from "../atoms/VIcon/VIcon";
+import VModal from "../molecules/VModal";
 export default {
   name: "ThemesList",
-  components: { VIcon, VRadioCheckbox, VButtonOutline, VCardTable },
+  components: { VIcon, VRadioCheckbox, VButtonOutline, VCardTable, VModal, VButtonInline, VButtonPrimary },
+  data: () => ({
+    themeToDelete: ""
+  }),
   computed: {
     ...mapState(["themes", "selectedThemeId"])
   },
@@ -45,7 +84,14 @@ export default {
       this.$store.commit("setSelectedTheme", id);
     },
     uninstallFromTheme(id) {
-      this.$store.dispatch("uninstallFromTheme", id);
+      if (this.themeToDelete) {
+        this.$store.dispatch("uninstallFromTheme", this.themeToDelete);
+        this.$refs.modal.showModal = false
+      }
+    },
+    openDeleteModal(id) {
+      this.themeToDelete = id;
+      this.$refs.modal.showModal = true
     }
   }
 };
