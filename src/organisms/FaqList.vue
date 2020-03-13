@@ -6,9 +6,10 @@
       v-for="(item, index) in items"
       :key="index"
       :class="{ active: activeItem === index }"
+      @click="activeItem = index"
     >
-      <div class="list-item__title" @click="activeItem = index">{{ item.title }}</div>
-      <div class="list-item__content">{{ item.content }}</div>
+      <div class="list-item__title" >{{ item.title }}</div>
+      <div class="list-item__content" v-html="item.content"></div>
     </div>
     <p><a href="mailto: hello@thedevl.com" target="_blank">Нужна помощь с установкой?</a></p>
   </div>
@@ -20,12 +21,25 @@ export default {
     activeItem: 0,
     items: [
       {
-        title: "dsfsdf",
-        content: "dsfs dsfsd sd fsdfs dfds fsdf sdf sd sd fsdf"
+        title: "Насколько безопасна установка приложения, не сломает ли оно сайт?",
+        content: `<p>Установка приложения полностью безопасна, 
+                  перед установкой создается резервная копия вашей темы, а так же копия шаблона collection.liquid.<p>
+                  <p>Вы в любой момент можете восстановить резервную копию вашей темы или удалить все файлы приложения из темы.</p>`
       },
       {
-        title: "dd sdfsdf",
-        content: "dsdsfdsfsdf dfdfdf fsdf sdf sd sd fsdf"
+        title: "Я могу установить AwesomeFilters на измененную или собственную тему дизайна? Как перенести изменения из существующего шаблона коллекции?",
+        content: `<p>Да, вы можете установить AwesomeFilters на любую тему. </p>
+                  <p>Для переноса существующего функциона шаблона collection.liquid, мы рекомендуем при установке приложения в тему, выбрать наиболее подходящий вам шаблон. </p>
+                  <p>Для переноса вашего функционала шаблона collection.liquid, воспользуйтесь <a href="">инструкцией по установке</a> или <a href="" target="_blank">закажите</a> доработку шаблона у нас.</p>`
+      },
+      {
+        title: "Я не нашел свой шаблон в списке, что мне делать?",
+        content: `<p>Мы бесплатно установим фильтры на ваш шаблон, если вы приобретали шаблон или устанавливали в магазине InSales и в шаблоне не изменен шаблон collection.liquid.</p>
+                  <p>Если шаблон был установлен не из магазина InSales или разработан индивидуально, то установка платная.</p>`
+      },
+      {
+        title: "Доработки входят в стоимость приложения?",
+        content: "Доработки шаблона оплачиваются отдельно, по согласованию."
       }
     ]
   })
