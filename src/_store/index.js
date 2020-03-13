@@ -4,11 +4,6 @@ import axios from "axios";
 import moment from "moment";
 Vue.use(Vuex);
 
-const api = axios.create({
-  baseURL: process.env.VUE_APP_API_URL,
-  withCredentials: true
-});
-
 export default new Vuex.Store({
   state: {
     user: {},
@@ -53,30 +48,28 @@ export default new Vuex.Store({
   },
   actions: {
     async setUser({ commit }) {
-      const { data } = await api.get("/get-user");
+      const { data } = await axios.get("/get-user");
       commit("setUser", data);
     },
     async setThemes({ commit }) {
-      const { data } = await api.get("/get-themes");
+      const { data } = await axios.get("/get-themes");
       commit("setThemes", data);
     },
     async installToTheme({ commit, dispatch, state }) {
       commit("setLoading", "Установка темы...")
       const template = state.selectedTemplate ? `&template=${state.selectedTemplate}` : "";
       try {
-        const { data } = await api.post(
+        const { data } = await axios.post(
           `/install-to-theme?themeId=${state.selectedThemeId}${template}`
         );
         if(data) {
           dispatch("setThemes");
           commit("setLoading", false);
         }
-        console.log(data);
         return Promise.resolve("Приложение установлено успешно");
-      } catch(e) {
-        console.log(e);
-        Promise.reject(e);
+      } catch({response}) {
         commit("setLoading", false);
+        return Promise.reject(response.error)
       }
     },
     async backupTheme({ commit, state, getters }) {
@@ -101,7 +94,7 @@ export default new Vuex.Store({
     },
     uninstallFromTheme({ commit, dispatch }, payload) {
       commit("setLoading", "Удаление темы...")
-      api.post(`/uninstall-from-theme?themeId=${payload}`).then(() => {
+      axios.post(`/uninstall-from-theme?themeId=${payload}`).then(() => {
         commit("setLoading", false);
         dispatch("setThemes");
       });

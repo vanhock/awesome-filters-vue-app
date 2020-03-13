@@ -66,7 +66,7 @@ body {
 .content {
   max-width: 1400px;
   min-height: 700px;
-  margin: 0 auto;
+  margin: 0 auto 50px auto;
   background-color: #fff;
   border-radius: 7px;
   @include box-shadow(medium);

@@ -46,14 +46,12 @@
           <section v-show="selectedSection === 2">
             <h2 class="title">2. Выберите шаблон страницы</h2>
             <div class="desc">
+              <p v-if="selectedTheme">Ваша тема: <b>{{selectedTheme.title}}</b></p>
               <p>
-                Выберите дизайн страницы, соответствующий вашей теме дизайна или
-                Стандартный.
+                Выберите шаблон страницы, соответствующий вашей теме дизайна.
               </p>
               <p>
-                Если не нашли вашу тему в списке,
-                <a href="#">закажите</a> индивидуальную разработку страницы с
-                фильтрами у нас.
+                Если не нашли вашу тему в списке, то выберите Стандартный шаблон.
               </p>
             </div>
             <templates-list />
@@ -66,6 +64,31 @@
               <v-button-inline @click="setSelected(1)">Назад</v-button-inline>
             </div>
           </section>
+          <section v-if="selectedSection === 3 && selectedTheme">
+            <h2 class="title">3. Просмотр темы</h2>
+            <div class="desc">
+              <p>
+                Приложение успешно установлено в тему {{selectedTheme.title}}!
+              </p>
+              <h3>Что дальше?</h3>
+              <p>Проверьте корректность установки приложения в тему.</p>
+              <p>
+                Если вы устанавливали приложение на нестандартную или измененную тему дизайна, <br />
+                то внесите изменения в текущий шаблон collection.liquid, используя бекап.
+              </p>
+              <h3>Нужна доработка шаблона?</h3>
+              <p>
+                <a href="mailto: hello@thedevl.com" target="_blank">Обратитесь к нам</a>, мы доработаем страницу с фильтрами и добавим нужный фунционал.
+              </p>
+            </div>
+            <div class="actions">
+              <a :href="`https://${user.shop}/collection/all?theme_preview=${selectedTheme.id}`" target="_blank">
+                <v-button-primary>Посмотреть тему</v-button-primary>
+              </a>
+              <v-button-inline @click="returnToStart">В начало</v-button-inline>
+            </div>
+          </section>
+          <faq-list />
         </div>
       </content-layout>
     </preloader>
@@ -74,6 +97,7 @@
 
 <script>
 import ThemesList from "../organisms/ThemesList";
+import FaqList from "../organisms/FaqList";
 import { mapState, mapGetters } from "vuex";
 import VButtonPrimary from "../molecules/VButton/VButtonPrimary";
 import VButtonInline from "../molecules/VButton/VButtonInline";
@@ -86,6 +110,7 @@ export default {
   name: "Home",
   components: {
     TemplatesList,
+    FaqList,
     ContentLayout,
     VButtonOutline,
     VButtonInline,
@@ -115,6 +140,7 @@ export default {
       this.$store.dispatch("backupTheme").then(() => {
         this.$store.dispatch("installToTheme").then(success => {
           this.$noty.success(success);
+          this.selectedSection = 3;
         }).catch(e => {
           console.log(e);
           this.$noty.error(e);
@@ -137,6 +163,10 @@ export default {
       setTimeout(() => {
         copied.remove();
       }, 2000);
+    },
+    returnToStart() {
+      this.selectedSection = 1;
+      this.$store.commit("setSelectedTheme", "");
     }
   }
 };
@@ -150,7 +180,7 @@ h2 {
   color: $color-b3;
 }
 .view-content {
-  padding: 0 30px;
+  padding: 0 30px 50px;
 }
 .desc {
   text-align: left;
@@ -182,6 +212,9 @@ h2 {
       .v-button {
         margin-top: 25px;
         font-size: 16px;
+      }
+      a {
+        text-decoration: none;
       }
     }
     img {
