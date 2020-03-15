@@ -43,7 +43,7 @@ export default new Vuex.Store({
       state.selectedTemplate = payload || "";
     },
     setLoading(state, payload) {
-      state.loading = payload || false
+      state.loading = payload || false;
     }
   },
   actions: {
@@ -55,45 +55,52 @@ export default new Vuex.Store({
       const { data } = await axios.get("/get-themes");
       commit("setThemes", data);
     },
-    async installToTheme({ commit, dispatch, state }) {
-      commit("setLoading", "Установка темы...")
-      const template = state.selectedTemplate ? `&template=${state.selectedTemplate}` : "";
+    async installToTheme({ commit, dispatch, state }, { update }) {
+      commit("setLoading", "Установка темы...");
+      const template =
+        state.selectedTemplate && !update
+          ? `&template=${state.selectedTemplate}`
+          : "";
       try {
         const { data } = await axios.post(
           `/install-to-theme?themeId=${state.selectedThemeId}${template}`
         );
-        if(data) {
+        if (data) {
           dispatch("setThemes");
           commit("setLoading", false);
         }
         return Promise.resolve("Приложение установлено успешно");
-      } catch({response}) {
+      } catch ({ response }) {
         commit("setLoading", false);
-        return Promise.reject(response.error)
+        return Promise.reject(response.error);
       }
     },
     async backupTheme({ commit, state, getters }) {
-      commit("setLoading", "Бекап темы...")
+      commit("setLoading", "Бекап темы...");
       await axios({
         url: `/backup-theme?themeId=${state.selectedThemeId}`,
-        method: 'GET',
-        responseType: 'blob', // important
-      }).then((response) => {
-        const fileName = `${getters.selectedTheme.title}-${moment().format('YYYY-MM-D-HH-mm')}.zip`;
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', fileName);
-        document.body.appendChild(link);
-        link.click();
-        return true;
-      }).catch(error => {
-        console.log(error);
-        commit("setLoading", false);
+        method: "GET",
+        responseType: "blob" // important
       })
+        .then(response => {
+          const fileName = `${getters.selectedTheme.title}-${moment().format(
+            "YYYY-MM-D-HH-mm"
+          )}.zip`;
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", fileName);
+          document.body.appendChild(link);
+          link.click();
+          return true;
+        })
+        .catch(error => {
+          console.log(error);
+          commit("setLoading", false);
+        });
     },
     uninstallFromTheme({ commit, dispatch }, payload) {
-      commit("setLoading", "Удаление темы...")
+      commit("setLoading", "Удаление темы...");
       axios.post(`/uninstall-from-theme?themeId=${payload}`).then(() => {
         commit("setLoading", false);
         dispatch("setThemes");

@@ -1,8 +1,8 @@
 <template>
   <div class="installation-view">
-    <preloader :show="loading" :text="loadingText">
-      <content-layout sidebar-position="right">
-        <div class="view-content">
+    <content-layout sidebar-position="right">
+      <div class="view-content">
+        <preloader :show="loading" :text="loadingText">
           <div class="installation-menu">
             <div class="item" :class="{ selected: selectedSection === 1 }">
               <v-icon mode="feather" icon="check-square" />
@@ -38,7 +38,7 @@
               >
               <v-button-outline
                 v-show="selectedTheme && selectedTheme.installed"
-                @click="installToTheme"
+                @click="installToTheme(true)"
                 >Обновить</v-button-outline
               >
             </div>
@@ -46,12 +46,15 @@
           <section v-show="selectedSection === 2">
             <h2 class="title">2. Выберите шаблон страницы</h2>
             <div class="desc">
-              <p v-if="selectedTheme">Ваша тема: <b>{{selectedTheme.title}}</b></p>
+              <p v-if="selectedTheme">
+                Ваша тема: <b>{{ selectedTheme.title }}</b>
+              </p>
               <p>
                 Выберите шаблон страницы, соответствующий вашей теме дизайна.
               </p>
               <p>
-                Если не нашли вашу тему в списке, то выберите Стандартный шаблон.
+                Если не нашли вашу тему в списке, то выберите Стандартный
+                шаблон.
               </p>
             </div>
             <templates-list />
@@ -68,30 +71,40 @@
             <h2 class="title">3. Просмотр темы</h2>
             <div class="desc">
               <p>
-                Приложение успешно установлено в тему {{selectedTheme.title}}!
+                Приложение успешно установлено в тему {{ selectedTheme.title }}!
               </p>
               <h3>Что дальше?</h3>
               <p>Проверьте корректность установки приложения в тему.</p>
               <p>
-                Если вы устанавливали приложение на нестандартную или измененную тему дизайна, <br />
-                то внесите изменения в текущий шаблон collection.liquid, используя бекап.
+                Если вы устанавливали приложение на нестандартную или измененную
+                тему дизайна, <br />
+                то внесите изменения в текущий шаблон collection.liquid,
+                используя бекап.
               </p>
               <h3>Нужна доработка шаблона?</h3>
               <p>
-                <a href="mailto: hello@thedevl.com" target="_blank">Обратитесь к нам</a>, мы доработаем страницу с фильтрами и добавим нужный фунционал.
+                <a href="mailto: hello@thedevl.com" target="_blank"
+                  >Обратитесь к нам</a
+                >, мы доработаем страницу с фильтрами и добавим нужный
+                фунционал.
               </p>
             </div>
             <div class="actions">
-              <a :href="`https://${user.shop}/collection/all?theme_preview=${selectedTheme.id}`" target="_blank">
+              <a
+                :href="
+                  `https://${user.shop}/collection/all?theme_preview=${selectedTheme.id}`
+                "
+                target="_blank"
+              >
                 <v-button-primary>Посмотреть тему</v-button-primary>
               </a>
               <v-button-inline @click="returnToStart">В начало</v-button-inline>
             </div>
           </section>
-          <faq-list />
-        </div>
-      </content-layout>
-    </preloader>
+        </preloader>
+        <faq-list />
+      </div>
+    </content-layout>
   </div>
 </template>
 
@@ -136,15 +149,18 @@ export default {
     }
   },
   methods: {
-    installToTheme() {
+    installToTheme(update = false) {
       this.$store.dispatch("backupTheme").then(() => {
-        this.$store.dispatch("installToTheme").then(success => {
-          this.$noty.success(success);
-          this.selectedSection = 3;
-        }).catch(e => {
-          console.log(e);
-          this.$noty.error(e);
-        });
+        this.$store
+          .dispatch("installToTheme", {update: update})
+          .then(success => {
+            this.$noty.success(success);
+            this.selectedSection = 3;
+          })
+          .catch(e => {
+            console.log(e);
+            this.$noty.error(e);
+          });
       });
     },
     setSelected(section) {

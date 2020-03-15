@@ -1,6 +1,8 @@
 <template>
   <div class="preloader-wrapper">
-    <slot></slot>
+    <div :style="{visibility: show ? 'hidden' : 'visible' }">
+      <slot></slot>
+    </div>
     <div class="preloader" :class="{ show: show, dark: dark }">
       <div class="pp-fading-spinner">
         <div

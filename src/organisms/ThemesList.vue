@@ -26,7 +26,7 @@
             }}</span>
             <span v-if="!theme.installed">Нет</span>
           </div>
-          <div class="uninstall">
+          <div class="on-hover">
             <v-icon
               v-if="theme.installed"
               mode="feather"
@@ -35,7 +35,15 @@
               @click="openDeleteModal(theme.id)"
             />
           </div>
-          <div class="update"></div>
+          <div class="on-hover">
+            <v-icon
+              v-if="theme.installed"
+              mode="feather"
+              icon="eye"
+              :params="{ iconSize: '18px' }"
+              @click="openPreview(theme.id)"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -78,7 +86,7 @@ export default {
     themeToDelete: ""
   }),
   computed: {
-    ...mapState(["themes", "selectedThemeId"])
+    ...mapState(["themes", "user", "selectedThemeId"])
   },
   methods: {
     setSelectedTheme(id) {
@@ -95,6 +103,10 @@ export default {
     openDeleteModal(id) {
       this.themeToDelete = id;
       this.$refs.modal.showModal = true
+    },
+    openPreview(themeId) {
+      const win = window.open(`https://${this.user.shop}/collection/all?theme_preview=${themeId}`, '_blank');
+      win.focus();
     }
   }
 };
@@ -170,7 +182,7 @@ export default {
         font-weight: bold;
       }
     }
-    .uninstall {
+    .on-hover {
       width: 50px;
       visibility: hidden;
       opacity: 0.4;
@@ -179,7 +191,7 @@ export default {
       }
     }
     &:hover {
-      .uninstall {
+      .on-hover {
         visibility: visible;
       }
     }
