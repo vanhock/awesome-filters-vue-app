@@ -99,12 +99,11 @@ export default new Vuex.Store({
           commit("setLoading", false);
         });
     },
-    uninstallFromTheme({ commit, dispatch }, payload) {
+    async uninstallFromTheme({ commit, dispatch }, payload) {
       commit("setLoading", "Удаление темы...");
-      axios.post(`/uninstall-from-theme?themeId=${payload}`).then(() => {
-        commit("setLoading", false);
-        dispatch("setThemes");
-      });
+      await axios.post(`/uninstall-from-theme?themeId=${payload}`);
+      commit("setLoading", false);
+      dispatch("setThemes");
     }
   },
   modules: {}
