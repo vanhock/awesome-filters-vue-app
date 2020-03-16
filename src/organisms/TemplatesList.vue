@@ -1,8 +1,8 @@
 <template>
   <div class="templates-list row">
     <v-slider mode="carousel" ref="slider">
-      <div v-for="(t, key) in templates" :key="key">
-        <div class="templates-list__item" :class="{selected: t.folder === selectedTemplate}" :style="{backgroundImage: `url(${t.image})`}" @click="setSelectedTemplate(t.folder)">
+      <div v-for="(t, key) in templates" :key="key" @click="setSelectedTemplate(t.folder)">
+        <div class="templates-list__item" :class="{selected: t.folder === selectedTemplate}" :style="{backgroundImage: `url(${t.image})`}">
           <div class="name">{{t.name}}</div>
         </div>
       </div>

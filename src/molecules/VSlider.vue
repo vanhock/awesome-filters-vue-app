@@ -9,14 +9,6 @@ import VueTinySlider from "vue-tiny-slider";
 export default {
   name: "VSlider",
   components: { slider: VueTinySlider },
-  mounted() {
-    this.$refs.slider.$on("transitionEnd", this.updSliderHeight);
-    this.$refs.slider.$on("newBreakpointEnd", this.resetSliderHeight);
-  },
-  beforeDestroy() {
-    this.$refs.slider.$off("transitionEnd", this.updSliderHeight);
-    this.$refs.slider.$off("newBreakpointEnd", this.resetSliderHeight);
-  },
   props: {
     mode: {
       type: String,
@@ -45,12 +37,14 @@ export default {
     },
     carouselOptions: {
       items: 2,
+      nav: false,
+      loop: false,
       responsive: {
         300: {
           controls: false
         },
         1400: {
-          items: 5,
+          items: 3,
           controls: true,
           edgePadding: 10,
           gutter: 14
@@ -93,6 +87,7 @@ export default {
 @import "~tiny-slider/src/tiny-slider";
 .v-slider {
   position: relative;
+  width: 100%;
   img {
     width: 100%;
   }
@@ -110,6 +105,7 @@ export default {
       cursor: pointer;
       border-radius: 50%;
       z-index: 10;
+      border: 0;
 
       &:before {
         content: "";
@@ -117,6 +113,10 @@ export default {
         width: 35px;
         height: 35px;
         background-position: center;
+      }
+      &[disabled] {
+        opacity: 0.5;
+        pointer-events: none;
       }
     }
     [data-controls="prev"] {
@@ -161,10 +161,10 @@ export default {
 .v-slider.v-slider--carousel {
   .tns-controls {
     [data-controls="prev"] {
-      left: -35px;
+      left: -50px;
     }
     [data-controls="next"] {
-      right: -35px;
+      right: -50px;
     }
   }
 }
