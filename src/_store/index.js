@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import axios from "axios";
+import Api from "../Api";
 import moment from "moment";
 Vue.use(Vuex);
 
@@ -48,11 +48,11 @@ export default new Vuex.Store({
   },
   actions: {
     async setUser({ commit }) {
-      const { data } = await axios.get("/get-user");
+      const { data } = await Api.get("/get-user");
       commit("setUser", data);
     },
     async setThemes({ commit }) {
-      const { data } = await axios.get("/get-themes");
+      const { data } = await Api.get("/get-themes");
       commit("setThemes", data);
     },
     async installToTheme({ commit, dispatch, state }, { update }) {
@@ -62,7 +62,7 @@ export default new Vuex.Store({
           ? `&template=${state.selectedTemplate}`
           : "";
       try {
-        const { data } = await axios.post(
+        const { data } = await Api.post(
           `/install-to-theme?themeId=${state.selectedThemeId}${template}`
         );
         if (data) {
@@ -77,7 +77,7 @@ export default new Vuex.Store({
     },
     async backupTheme({ commit, state, getters }) {
       commit("setLoading", "Бекап темы...");
-      await axios({
+      await Api({
         url: `/backup-theme?themeId=${state.selectedThemeId}`,
         method: "GET",
         responseType: "blob" // important
@@ -101,7 +101,7 @@ export default new Vuex.Store({
     },
     async uninstallFromTheme({ commit, dispatch }, payload) {
       commit("setLoading", "Удаление темы...");
-      await axios.post(`/uninstall-from-theme?themeId=${payload}`);
+      await Api.post(`/uninstall-from-theme?themeId=${payload}`);
       commit("setLoading", false);
       dispatch("setThemes");
     }

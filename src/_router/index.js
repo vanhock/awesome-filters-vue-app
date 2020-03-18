@@ -35,6 +35,16 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "SignInView" */ "../views/SignInView.vue"),
   },
+  {
+    path: "/unauthorized",
+    name: "unauthorized",
+    meta: {
+      title: "Зайдите в приложение через бек-офис",
+      menu: false
+    },
+    component: () =>
+      import(/* webpackChunkName: "UnauthorizedView" */ "../views/UnauthorizedView.vue"),
+  },
 ];
 
 const router = new VueRouter({
