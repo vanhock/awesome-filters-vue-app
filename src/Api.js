@@ -26,10 +26,11 @@ class Api {
     document.location = path;
   };
 
-  async get(path) {
+  async get(path, options = {}) {
     return await this.service.request({
       method: "GET",
-      url: path
+      url: path,
+      ...options
     });
   }
 
@@ -43,13 +44,14 @@ class Api {
       })
   }
 
-  async post(path, payload) {
+  async post(path, payload, options = {}) {
     return await this.service
       .request({
         method: "POST",
         url: path,
         responseType: "json",
-        data: payload
+        data: payload,
+        ...options
       })
   }
 }

@@ -77,9 +77,7 @@ export default new Vuex.Store({
     },
     async backupTheme({ commit, state, getters }) {
       commit("setLoading", "Бекап темы...");
-      await Api({
-        url: `/backup-theme?themeId=${state.selectedThemeId}`,
-        method: "GET",
+      await Api.get(`/backup-theme?themeId=${state.selectedThemeId}`, {
         responseType: "blob" // important
       })
         .then(response => {
