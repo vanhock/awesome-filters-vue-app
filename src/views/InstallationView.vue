@@ -19,7 +19,7 @@
           </div>
           <section v-show="selectedSection === 1">
             <h2 class="title">1. Выберите тему</h2>
-            <div class="desc">
+            <div class="desc" v-if="themes && themes.length">
               <p>Выберите тему, в которую вы хотите установить Awesome Filters.</p>
               <p>
                 В выбранную тему будут скопированы файлы, необходимые для работы
@@ -32,7 +32,7 @@
               <p>В списке отображены только не опубликованные темы.</p>
             </div>
             <themes-list />
-            <div class="actions">
+            <div class="actions" v-if="themes && themes.length">
               <v-button-primary
                 :disabled="!selectedThemeId"
                 @click="setSelected(2)"
@@ -141,7 +141,7 @@ export default {
     selectedSection: 1
   }),
   computed: {
-    ...mapState(["user", "selectedThemeId", "selectedTemplate"]),
+    ...mapState(["user", "selectedThemeId", "selectedTemplate", "themes"]),
     ...mapGetters(["selectedTheme", "loading", "loadingText"]),
     editSourceCodeUrl() {
       if (!this.user) {

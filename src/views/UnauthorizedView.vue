@@ -18,6 +18,9 @@ export default {
   },
   methods: {
     toTheBackOffice() {
+      if(!this.user) {
+        return
+      }
       location.href = `https://${this.user.shop}/admin2/applications`;
     }
   }

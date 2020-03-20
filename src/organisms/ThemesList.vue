@@ -47,6 +47,14 @@
         </div>
       </div>
     </div>
+    <div class="themes__empty" v-if="!themes || !themes.length">
+      <div class="text">
+        <p><b>В вашем магазине нет не опубликованных тем!</b></p>
+        <p>Чтобы продолжить, перейдите в раздел "Темы", скопируйте Основую тему и заново зайдите в приложение</p>
+        <div class="actions"><v-button-primary @click="openThemesPage">Перейти в раздел "Темы"</v-button-primary></div>
+      </div>
+      <img src="no-themes.jpg" alt="" />
+    </div>
     <v-modal
       ref="modal"
       title="Удаление AwesomeFilters из темы"
@@ -81,7 +89,15 @@ import VIcon from "../atoms/VIcon/VIcon";
 import VModal from "../molecules/VModal";
 export default {
   name: "ThemesList",
-  components: { VIcon, VRadioCheckbox, VButtonOutline, VCardTable, VModal, VButtonInline, VButtonPrimary },
+  components: {
+    VIcon,
+    VRadioCheckbox,
+    VButtonOutline,
+    VCardTable,
+    VModal,
+    VButtonInline,
+    VButtonPrimary
+  },
   data: () => ({
     themeToDelete: ""
   }),
@@ -94,19 +110,27 @@ export default {
     },
     uninstallFromTheme(id) {
       if (this.themeToDelete) {
-        this.$store.dispatch("uninstallFromTheme", this.themeToDelete).then(() => {
-           this.$noty.success("Приложение удалено из темы");
-        })
+        this.$store
+          .dispatch("uninstallFromTheme", this.themeToDelete)
+          .then(() => {
+            this.$noty.success("Приложение удалено из темы");
+          });
         this.$refs.modal.showModal = false;
       }
     },
     openDeleteModal(id) {
       this.themeToDelete = id;
-      this.$refs.modal.showModal = true
+      this.$refs.modal.showModal = true;
     },
     openPreview(themeId) {
-      const win = window.open(`https://${this.user.shop}/collection/all?theme_preview=${themeId}`, '_blank');
+      const win = window.open(
+        `https://${this.user.shop}/collection/all?theme_preview=${themeId}`,
+        "_blank"
+      );
       win.focus();
+    },
+    openThemesPage() {
+      location.href = `https://${this.user.shop}/admin2/themes`
     }
   }
 };
@@ -193,6 +217,23 @@ export default {
     &:hover {
       .on-hover {
         visibility: visible;
+      }
+    }
+  }
+  &__empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 34px;
+    background-color: $color-b5;
+    border-radius: 7px;
+    img {
+      width: 240px;
+    }
+    .text {
+      margin-right: 15px;
+      b {
+        margin-bottom: 15px;
       }
     }
   }

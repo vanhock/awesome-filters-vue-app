@@ -25,14 +25,24 @@ export default {
   },
   watch: {
     selectedTheme(theme) {
+      let selected;
       templates.some((template, index) => {
+        const themeTitle = theme.title.toLowerCase();
+        const templateTitle = template.name.toLowerCase();
+        const themeTitleArray = theme.title.toLowerCase().split(" ");
         if (
-          theme.title.toLowerCase().includes(template.name.toLowerCase())
+          themeTitle.includes(templateTitle) ||
+          themeTitleArray.some(t => t.length > 3 && template.name.toLowerCase().includes(t))
         ) {
+          selected = template.folder;
           this.setSelectedTemplate(template.folder);
           return this.$refs.slider.goTo(index);
         }
       });
+      if(!selected) {
+        this.setSelectedTemplate("default");
+        return this.$refs.slider.goTo(0);
+      }
     }
   },
   methods: {

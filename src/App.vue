@@ -1,6 +1,10 @@
 <template>
   <div id="app">
     <div id="nav">
+      <div class="back-to-store" v-if="user && user.shop" @click="toTheBackOffice">
+        <v-icon icon="chevron-left" mode="feather" :params="{width: '258px', height: '110px' }" />
+        Вернуться в бек-офис
+      </div>
       <v-icon icon="awesomefilters" :params="{width: '258px', height: '110px' }" />
       <!-- <router-menu :menu="menu" /> -->
     </div>
@@ -18,6 +22,7 @@ import VIcon from "./atoms/VIcon/VIcon"
 
 import Vue from "vue";
 import VueNoty from "vuejs-noty";
+import {mapState} from "vuex";
 Vue.use(VueNoty, {
   timeout: 1500,
   dismissQueue: true,
@@ -37,8 +42,17 @@ export default {
     this.$store.dispatch("setUser");
   },
   computed: {
+    ...mapState(["user"]),
     menu() {
       return this.$router && this.$router.options.routes;
+    }
+  },
+  methods: {
+    toTheBackOffice() {
+      if(!this.user) {
+        return
+      }
+      location.href = `https://${this.user.shop}/admin2/applications`;
     }
   }
 };
@@ -51,6 +65,7 @@ body {
   padding: 0;
 }
 #app {
+
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -60,8 +75,12 @@ body {
 }
 
 #nav {
+  position: relative;
+  max-width: 1400px;
+  margin: 0 auto;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 .content {
   max-width: 1400px;
@@ -73,6 +92,24 @@ body {
   h1 {
     padding: 30px 0;
     margin: 0;
+  }
+}
+.back-to-store {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  width: 117px;
+  left: 0;
+  line-height: 17px;
+  opacity: 0.5;
+  cursor: pointer;
+  font-size: 12px;
+  text-align: left;
+  .v-icon {
+    margin-right: 7px;
+  }
+  &:hover {
+    opacity: 1;
   }
 }
 </style>

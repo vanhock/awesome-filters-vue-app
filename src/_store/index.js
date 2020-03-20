@@ -52,8 +52,10 @@ export default new Vuex.Store({
       commit("setUser", data);
     },
     async setThemes({ commit }) {
+      commit("setLoading", "Загрузка");
       const { data } = await Api.get("/get-themes");
       commit("setThemes", data);
+      commit("setLoading", false);
     },
     async installToTheme({ commit, dispatch, state }, { update }) {
       commit("setLoading", "Установка темы...");
