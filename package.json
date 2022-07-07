@@ -13,7 +13,7 @@
     "bootstrap-4-grid": "^3.4.0",
     "core-js": "^3.6.4",
     "feather-icons": "^4.26.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "tradetime-web": "^1.0.7",
     "vue": "^2.6.11",
     "vue-feather": "^1.0.0",
